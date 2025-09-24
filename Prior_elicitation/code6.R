@@ -36,8 +36,6 @@ x_tilde_samples <- rnorm(n_sims, mean = theta_samples, sd = sigma)
 # Posterior summaries
 cat("Posterior mean of theta:         ", mean(theta_samples), "\n")
 cat("Posterior SD of theta:           ", sd(theta_samples), "\n")
-cat("Posterior mean of mu:            ", mean(mu), "\n")
-cat("Posterior SD of mu:              ", sd(mu), "\n")
 cat("Posterior predictive mean of ~X:  ", mean(x_tilde_samples), "\n")
 cat("Posterior predictive SD of ~X:    ", sd(x_tilde_samples), "\n")
 cat("Posterior mean of tau:           ", mean(tau), "\n")
@@ -51,12 +49,8 @@ hist(x_tilde_samples, breaks = 50,
      xlim = range(c(x, x_tilde_samples)))
 
 # add lines:
-abline(v = mean(x_tilde_samples), col = "red", lwd = 2)            # posterior predictive mean
-abline(v = mean(theta_samples), col = "darkgreen", lwd = 2, lty = 2) # posterior mean of theta
-abline(v = x_bar, col = "black", lwd = 1.5, lty = 3)               # observed sample mean
+#abline(v = mean(x_tilde_samples), col = "red", lwd = 2)            # posterior predictive mean
+#abline(v = mean(theta_samples), col = "darkgreen", lwd = 2, lty = 2) # posterior mean of theta
+abline(v = x_bar, col = "red", lwd = 1.5)               # observed sample mean
 
-legend("topright",
-       legend = c("Posterior predictive mean", "Posterior mean of theta", "Observed sample mean"),
-       col = c("red", "darkgreen", "black"),
-       lwd = c(2,2,1.5),
-       lty = c(1,2,3))
+
