@@ -19,31 +19,44 @@ n_sims <- 10000
 tau <- abs(rcauchy(n_sims, location = 0, scale = scale_tau))
 tau2 <- tau^2
 
-# 2. Sample mu from its conditional posterior given tau
-mu_post_sd <- sqrt(1 / (1/tau2 + 1/sigma_mu^2))
-mu_post_mean <- mu_post_sd^2 * (0/sigma_mu^2 + x_bar/tau2)
-mu <- rnorm(n_sims, mean = mu_post_mean, sd = mu_post_sd)
+# 2. Sample mu from posterior conditional on tau and the data (marginalising theta)
+# Xbar | mu, tau2 ~ N(mu, tau2 + sigma2/n)
+mu_post_var <- 1 / ( 1/(tau2 + sigma2/n) + 1/sigma_mu^2 )
+mu_post_mean <- mu_post_var * ( x_bar/(tau2 + sigma2/n) + mu0/sigma_mu^2 )
+mu <- rnorm(n_sims, mean = mu_post_mean, sd = sqrt(mu_post_var))
 
-# 3. Sample theta from its conditional posterior given mu and tau2
-theta_post_sd <- sqrt(1 / (n/sigma2 + 1/tau2))
-theta_post_mean <- theta_post_sd^2 * (n*x_bar/sigma2 + mu/tau2)
-theta_samples <- rnorm(n_sims, mean = theta_post_mean, sd = theta_post_sd)
+# 3. Sample theta from its posterior given mu and tau2
+theta_post_var <- 1 / ( n/sigma2 + 1/tau2 )
+theta_post_mean <- theta_post_var * ( n*x_bar/sigma2 + mu/tau2 )
+theta_samples <- rnorm(n_sims, mean = theta_post_mean, sd = sqrt(theta_post_var))
 
 # 4. Posterior predictive samples
 x_tilde_samples <- rnorm(n_sims, mean = theta_samples, sd = sigma)
 
 # Posterior summaries
-cat("Posterior mean of theta:", mean(theta_samples), "\n")
-cat("Posterior SD of theta:", sd(theta_samples), "\n")
-cat("Posterior predictive mean of ~X:", mean(x_tilde_samples), "\n")
-cat("Posterior predictive SD of ~X:", sd(x_tilde_samples), "\n")
+cat("Posterior mean of theta:         ", mean(theta_samples), "\n")
+cat("Posterior SD of theta:           ", sd(theta_samples), "\n")
+cat("Posterior mean of mu:            ", mean(mu), "\n")
+cat("Posterior SD of mu:              ", sd(mu), "\n")
+cat("Posterior predictive mean of ~X:  ", mean(x_tilde_samples), "\n")
+cat("Posterior predictive SD of ~X:    ", sd(x_tilde_samples), "\n")
+cat("Posterior mean of tau:           ", mean(tau), "\n")
+cat("Posterior SD of tau:             ", sd(tau), "\n")
 
-# Histogram of posterior predictive samples
+# Plot: single histogram + vertical lines + legend
 hist(x_tilde_samples, breaks = 50,
      main = "Posterior Predictive Distribution",
      xlab = expression(tilde(X)),
      col = "skyblue", border = "white",
      xlim = range(c(x, x_tilde_samples)))
 
-# Add posterior predictive mean
-abline(v = mean(x_tilde_samples), col = "red", lwd = 2)
+# add lines:
+abline(v = mean(x_tilde_samples), col = "red", lwd = 2)            # posterior predictive mean
+abline(v = mean(theta_samples), col = "darkgreen", lwd = 2, lty = 2) # posterior mean of theta
+abline(v = x_bar, col = "black", lwd = 1.5, lty = 3)               # observed sample mean
+
+legend("topright",
+       legend = c("Posterior predictive mean", "Posterior mean of theta", "Observed sample mean"),
+       col = c("red", "darkgreen", "black"),
+       lwd = c(2,2,1.5),
+       lty = c(1,2,3))
