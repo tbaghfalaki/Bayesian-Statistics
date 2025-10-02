@@ -1,7 +1,7 @@
 # --- Step 1: Set parameters ---
 theta_true <- 5        # True theta
 sigma <- 2             # Known SD of X_i
-n <- 100               # Sample size
+n <- 1000               # Sample size
 
 # Prior hyperparameters
 mu0 <- 0
@@ -46,14 +46,19 @@ hist(posterior_samples, breaks = 30, probability = TRUE,
 
 # Overlay posterior density
 theta_vals <- seq(mu_n - 4*sigma_n, mu_n + 4*sigma_n, length.out = 500)
+
 lines(theta_vals, dnorm(theta_vals, mean = mu_n, sd = sigma_n), col = "red", lwd = 2)
 
 
 
 # --- Step 5: Highlight 95% posterior interval ---
-ci <- qnorm(c(0.025, 0.975), mean = mu_n, sd = sigma_n)
+ci <- qnorm(c(0.05, 0.95), mean = mu_n, sd = sigma_n)
 abline(v = ci, col = "blue", lwd = 2, lty = 2)
 abline(v = mu_n, col = "red", lwd = 2, lty = 2)
+
+# --- Step 6: Highlight 95% posterior interval (by posterior samples) ---
+ci_sample=quantile(posterior_samples,c(0.05, 0.95))
+abline(v = ci_sample, col = "orange", lwd = 2, lty = 2)
 
 legend("topright", legend = c("Posterior Density", "Posterior Mean", "95% CI"),
        col = c("red", "red", "blue"), lwd = 2, lty = c(1,2,2))
