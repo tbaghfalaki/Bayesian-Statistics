@@ -20,3 +20,4 @@ curve(histprior(x, midpt, prior),
       main = "Prior Density via Histogram Method",
       col = "steelblue",      # Color of the curve
       lwd = 2)                # Line width
+
