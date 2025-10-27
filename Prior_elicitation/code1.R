@@ -1,3 +1,4 @@
+
 # Load the LearnBayes package
 library(LearnBayes)
 
@@ -13,9 +14,9 @@ prior <- prior / sum(prior)
 # Plot the prior density using the histogram method with color
 curve(histprior(x, midpt, prior), 
       from = 0, to = 1,
+      xlab = expression(paste(theta)),
       ylab = "Prior density",
       ylim = c(0, 0.3),
       main = "Prior Density via Histogram Method",
       col = "steelblue",      # Color of the curve
       lwd = 2)                # Line width
-
