@@ -5,18 +5,20 @@ library(dplyr)
 
 # Load data
 data(cells)
+attach(cells)
 
 # Prepare dataset
 cells <- cells %>%
   mutate(
     smoker = as.numeric(smoker),
     gender = as.numeric(gender),
-    weightf = factor(weight, levels = c("normal", "overweight", "obese")),
-    agef = factor(age, levels = c("young", "middle", "old"))
+    weightf = factor(weight, levels = c("normal", "over", "obese")),
+    agef = factor(age, levels = c("young", "mid", "old"))
   )
 
 # Model matrix: Intercept, Smoking, BMI(Overweight/Obese), Age(Middle/Old), Gender
 X <- model.matrix(~ smoker + weightf + agef + gender, data = cells)
+table(X[,3])
 K <- ncol(X)
 N <- nrow(X)
 Y <- cells$cells   # response variable (count of infected cells)
@@ -109,10 +111,10 @@ fit_nb <- jags(
 )
 
 # Summarize results
+print(fit_pois)
 print(fit_nb)
 
- 
+
 
 fit_pois$BUGSoutput$DIC
 fit_nb$BUGSoutput$DIC
-
