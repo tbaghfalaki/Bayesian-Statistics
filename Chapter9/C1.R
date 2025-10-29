@@ -1,10 +1,5 @@
 rm(list=ls())
 library(R2jags)
-# Load packages
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(patchwork)  # for combining plots
 
 # Load data
 Data <- read.csv("C:\\Users\\p80744tb\\Desktop\\titanic\\train_complete.csv", stringsAsFactors = FALSE)
@@ -73,6 +68,7 @@ fit <- jags(
 
 # Summarize results
 print(fit)
+
 
 
 
