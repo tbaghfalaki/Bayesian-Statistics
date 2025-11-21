@@ -1,9 +1,9 @@
 ### ---- Variational Bayes for Normal Model (Example 2) ----
 rm(list=ls())
-set.seed(123)
+set.seed(9)
 
 # --- Generate data ---
-n <- 5000
+n <- 100
 theta_true <- 2
 sigma2_true <- 1
 y <- rnorm(n, mean = theta_true, sd = sqrt(sigma2_true))
