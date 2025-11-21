@@ -43,6 +43,21 @@ for (iter in 1:max_iter) {
 }
 print(iter) # convergence check stop here
 
+# Posterior mean and SD analytically
+theta_mean_vb <- mu
+theta_sd_vb   <- sqrt(1/lambda)
+
+sigma2_mean_vb <- tilde_b / (tilde_a - 1)
+sigma2_sd_vb   <- sqrt(tilde_b^2 / ((tilde_a - 1)^2 * (tilde_a - 2)))
+
+cat("VB posterior mean of theta:", theta_mean_vb, "\n")
+cat("VB posterior SD of theta:", theta_sd_vb, "\n\n")
+
+cat("VB posterior mean of sigma^2:", sigma2_mean_vb, "\n")
+cat("VB posterior SD of sigma^2:", sigma2_sd_vb, "\n")
+
+
+
 
 
 # --- Optional: Draw posterior samples from q* (if you want to plot later) ---
