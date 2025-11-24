@@ -10,8 +10,8 @@ y <- rnorm(n, mean = theta_true, sd = sqrt(sigma2_true))
 
 # --- Prior parameters ---
 tau2 <- 100         # prior variance for theta
-a0 <- 0.01            # IG prior shape
-b0 <- 0.01            # IG prior scale
+a0 <- 0.01          # IG prior shape
+b0 <- 0.01          # IG prior scale
 
 # --- Initialize VB parameters ---
 mu <- 0
@@ -41,7 +41,7 @@ for (iter in 1:max_iter) {
   if (max(abs(mu - mu_old), abs(lambda - lambda_old), abs(tilde_b - tb_old)) < tol)
     break
 }
-print(iter) # convergence check stop here
+print(iter)
 
 # Posterior mean and SD analytically
 theta_mean_vb <- mu
@@ -52,51 +52,62 @@ sigma2_sd_vb   <- sqrt(tilde_b^2 / ((tilde_a - 1)^2 * (tilde_a - 2)))
 
 cat("VB posterior mean of theta:", theta_mean_vb, "\n")
 cat("VB posterior SD of theta:", theta_sd_vb, "\n\n")
-
 cat("VB posterior mean of sigma^2:", sigma2_mean_vb, "\n")
 cat("VB posterior SD of sigma^2:", sigma2_sd_vb, "\n")
 
-
-
-
-
-# --- Optional: Draw posterior samples from q* (if you want to plot later) ---
-S <- 10000
+# --- Draw posterior samples from VB ---
+S <- 1000
 theta_samples <- rnorm(S, mean = mu, sd = sqrt(1/lambda))
 sigma2_samples <- 1 / rgamma(S, shape = tilde_a, rate = tilde_b)
 
+# --- Exact posterior densities ---
+theta_seq <- seq(1.5, 2.5, length.out=500)
+sigma2_seq <- seq( 0.5, max(sigma2_samples)*1.5, length.out=500)
 
+# Inverse-Gamma density
+dinvgamma <- function(x, shape, rate){
+  (rate^shape / gamma(shape)) * x^(-shape-1) * exp(-rate/x)
+}
 
+# Exact posterior parameters
+a_n <- a0 + n/2
+b_n <- b0 + 0.5 * sum((y - mean(y))^2) + (n*(mean(y) - 0)^2)/(2*(tau2+n))
 
-library(ggplot2)
+# Exact densities
+sigma2_density <- dinvgamma(sigma2_seq, a_n, b_n)
+theta_df <- 2 * a_n
+theta_mean <- mean(y)
+theta_scale <- sqrt(b_n / (a_n * n))
+theta_density <- dt((theta_seq - theta_mean)/theta_scale, df=theta_df)/theta_scale
 
-library(ggplot2)
-library(dplyr)
-
-# Prepare data in long format
-df <- data.frame(
+# --- Prepare data frames for plotting ---
+df_vb <- data.frame(
   value = c(theta_samples, sigma2_samples),
-  parameter = rep(c("theta", "sigma2"), each = length(theta_samples))
+  parameter = rep(c("theta","sigma2"), each=S),
+  type = "VB"
+)
+
+df_exact <- data.frame(
+  value = c(theta_seq, sigma2_seq),
+  density = c(theta_density, sigma2_density),
+  parameter = rep(c("theta","sigma2"), each=length(theta_seq)),
+  type = "Exact"
 )
 
 # True values
 true_vals <- data.frame(
-  parameter = c("theta", "sigma2"),
+  parameter = c("theta","sigma2"),
   true = c(theta_true, sigma2_true)
 )
 
-# Plot with facets
-p_facet <- ggplot(df, aes(x = value, fill = parameter)) +
-  geom_density(alpha = 0.5) +
-  geom_vline(data = true_vals, aes(xintercept = true, color = parameter),
-             linetype = "dashed", size = 1) +
-  facet_wrap(~parameter, scales = "free") +
-  scale_fill_manual(values = c("skyblue", "yellow3")) +
-  scale_color_manual(values = c("blue", "orange3")) +
-  labs(title = "VB Posterior Densities of θ and σ²",
-       x = "Value", y = "Density") +
-  theme_bw() +
-  theme(legend.position = "none")
-
-print(p_facet)
-
+# --- Plot VB (shaded) vs Exact (line) ---
+ggplot() +
+  geom_density(data=df_vb, aes(x=value, fill=type), alpha=0.5, color=NA) +
+  geom_line(data=df_exact, aes(x=value, y=density, color=type), size=1.2) +
+  geom_vline(data=true_vals, aes(xintercept=true), linetype="dashed", size=1) +
+  facet_wrap(~parameter, scales="free") +
+  scale_fill_manual(values=c("VB"="skyblue","Exact"="pink")) +
+  scale_color_manual(values=c("VB"="skyblue","Exact"="red")) +
+  labs(title="VB Posterior (shaded) vs Exact Posterior (line)",
+       x="Value", y="Density", fill="Distribution", color="Distribution") +
+  theme_bw()
