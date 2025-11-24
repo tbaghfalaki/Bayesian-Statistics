@@ -106,8 +106,8 @@ ggplot() +
   geom_line(data=df_exact, aes(x=value, y=density, color=type), size=1.2) +
   geom_vline(data=true_vals, aes(xintercept=true), linetype="dashed", size=1) +
   facet_wrap(~parameter, scales="free") +
-  scale_fill_manual(values=c("VB"="skyblue","Exact"="pink")) +
-  scale_color_manual(values=c("VB"="skyblue","Exact"="red")) +
+  scale_fill_manual(values=c("VB"="yellow3","Exact"="pink2")) +
+  scale_color_manual(values=c("VB"="yellow3","Exact"="pink2")) +
   labs(title="VB Posterior (shaded) vs Exact Posterior (line)",
        x="Value", y="Density", fill="Distribution", color="Distribution") +
   theme_bw()
