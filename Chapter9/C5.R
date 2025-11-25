@@ -175,7 +175,7 @@ fit_weibull <- sampling(
 )
 
 
-print(fit_weibull, pars = c("beta","alpha","lambda"))
+print(fit_weibull, pars = c("beta","alpha"))
 
 
 # Extract log-likelihood per draw
