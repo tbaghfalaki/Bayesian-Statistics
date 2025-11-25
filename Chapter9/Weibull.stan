@@ -9,16 +9,14 @@ data {
 parameters {
   vector[K] beta;                  
   real<lower=0> alpha;             
-  real<lower=0> lambda;            
 }
 
 model {
   beta ~ normal(0, 5);
   alpha ~ gamma(1, 1);
-  lambda ~ normal(0, 5);
 
   for (i in 1:N) {
-    real lambda_i = lambda * exp(-X[i] * beta);
+    real lambda_i = exp(-X[i] * beta);   // lambda absorbed in beta
     if (delta[i] == 1)
       target += weibull_lpdf(T[i] | alpha, lambda_i);
     else
@@ -29,7 +27,7 @@ model {
 generated quantities {
   vector[N] log_lik;
   for (i in 1:N) {
-    real lambda_i = lambda * exp(-X[i] * beta);
+    real lambda_i = exp(-X[i] * beta);
     if (delta[i] == 1)
       log_lik[i] = weibull_lpdf(T[i] | alpha, lambda_i);
     else
