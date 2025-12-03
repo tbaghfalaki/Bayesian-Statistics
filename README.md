@@ -1,6 +1,6 @@
 # Bayesian-Statistics
 
-This page contains the R code accompanying the **Bayesian Statistics** notebook by Baghfalaki, from the *Department of Mathematics* at **the University of Manchester**, Semester 1 (2025–26).
+This page contains the R code accompanying the **Bayesian Statistics** Bookwork by Baghfalaki, from the *Department of Mathematics* at **the University of Manchester**, Semester 1 (2025–26).
 
 
 
