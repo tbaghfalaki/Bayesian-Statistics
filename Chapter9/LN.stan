@@ -13,7 +13,7 @@ parameters {
 
 model {
   // Priors
-  beta ~ normal(0, 5);
+  beta ~ normal(0, 100);
   sigma ~ cauchy(0, 2.5);
 
   // Likelihood
@@ -37,3 +37,4 @@ generated quantities {
     }
   }
 }
+
