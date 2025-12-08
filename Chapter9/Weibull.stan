@@ -12,7 +12,7 @@ parameters {
 }
 
 model {
-  beta ~ normal(0, 5);
+  beta ~ normal(0, 100);
   alpha ~ gamma(1, 1);
 
   for (i in 1:N) {
@@ -34,3 +34,4 @@ generated quantities {
       log_lik[i] = weibull_lccdf(T[i] | alpha, lambda_i);
   }
 }
+
