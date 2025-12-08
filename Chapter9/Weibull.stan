@@ -12,11 +12,11 @@ parameters {
 }
 
 model {
-  beta ~ normal(0, 100);
+  beta ~ normal(0, 5);
   alpha ~ gamma(1, 1);
 
   for (i in 1:N) {
-    real lambda_i = exp(-X[i] * beta);   // lambda absorbed in beta
+    real lambda_i = exp(X[i] * beta);   // lambda absorbed in beta
     if (delta[i] == 1)
       target += weibull_lpdf(T[i] | alpha, lambda_i);
     else
@@ -27,11 +27,10 @@ model {
 generated quantities {
   vector[N] log_lik;
   for (i in 1:N) {
-    real lambda_i = exp(-X[i] * beta);
+    real lambda_i = exp(X[i] * beta);
     if (delta[i] == 1)
       log_lik[i] = weibull_lpdf(T[i] | alpha, lambda_i);
     else
       log_lik[i] = weibull_lccdf(T[i] | alpha, lambda_i);
   }
 }
-
