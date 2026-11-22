@@ -30,3 +30,4 @@ generated quantities {
     log_lik[n] = neg_binomial_2_lpmf(Y[n] | lambda[n], phi);
   }
 }
+
